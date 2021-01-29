@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8sp"
+    android:orientation="vertical"
+    tools:context=".ElencoActivity">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#186f96"
+        android:elevation="2sp"
+        app:cardCornerRadius="8sp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/cardborder" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4sp"
+            android:background="#186f96">
+
+            <TextView
+                android:id="@+id/nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:layout_marginTop="8sp"
+                android:layout_marginEnd="8sp"
+
+                android:textColor="#9ca9ae"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/nome"
+                android:layout_marginTop="8sp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nome"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/modo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8sp"
+                        android:layout_marginTop="8sp"
+                        android:layout_marginEnd="8sp"
+                        android:text="NORMALE"
+                        android:textColor="#9ca9ae"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/stato1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8sp"
+                        android:layout_marginTop="8sp"
+                        android:layout_marginEnd="8sp"
+                        android:text="ON/OFF"
+                        android:textColor="#9ca9ae"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/stato"
+                    android:layout_width="0sp"
+                    android:layout_height="50sp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8sp"
+                    android:layout_weight="1"
+
+                    android:backgroundTint="#3999c4"
+
+                    android:text="ON/OFF"
+                    android:textAlignment="center"
+                    android:textColor="#9ca9ae"
+                    android:textSize="18sp"
+                    android:textStyle="bold">
+
+                </Button>
+
+                <Button
+                    android:id="@+id/configura"
+                    android:layout_width="0sp"
+                    android:layout_height="50sp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8sp"
+                    android:layout_weight="1"
+
+                    android:backgroundTint="#3999c4"
+                    android:text="CONF"
+                    android:textAlignment="center"
+                    android:textColor="#9ca9ae"
+                    android:textSize="18sp"
+                    android:textStyle="bold">
+
+                </Button>
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+    <!-- TODO: Update blank fragment layout -->
+
+
+</LinearLayout>

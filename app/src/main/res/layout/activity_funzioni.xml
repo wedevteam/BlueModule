@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="#3999c4"
+    tools:context=".FunzioniActivity">
+    <androidx.cardview.widget.CardView
+        android:background="#186f96"
+        android:id="@+id/title"
+        app:cardCornerRadius="8sp"
+        android:layout_margin="8sp"
+        android:elevation="2sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+            android:background="@drawable/titlecardborder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:background="#186f96"
+            android:layout_width="match_parent"
+            android:layout_margin="4sp"
+            android:weightSum="2"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:orientation="horizontal"
+                android:layout_below="@id/modo"
+
+                android:layout_marginStart="8sp"
+                android:weightSum="3">
+
+                <ImageView
+                    android:src="@drawable/immaginebase"
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:layout_margin="8sp"
+                    android:id="@+id/stato"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stato_off">
+
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/nomebt"
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_gravity="center"
+                    android:text="BlueModule"
+                    android:layout_margin="8sp"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold">
+
+                </TextView>
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="IN CONNESSIONE"
+                android:textSize="20sp"
+                android:textColor="#9ca9ae"
+                android:textAlignment="center"
+                android:layout_marginBottom="4sp"
+                android:id="@+id/statobt">
+
+            </TextView>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+    <ScrollView
+        android:layout_below="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textmodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Modo: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textvhw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textmodo"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Vers.HW: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textvsw"
+                android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                android:layout_below="@id/textvhw"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Vers.SW: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/texttempo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textvsw"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Tempo relè: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textnome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/texttempo"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Nuovo nome: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textpw1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnnome"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Password principale: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textpw2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btninvia1"
+                android:layout_marginTop="2sp"
+                android:layout_marginStart="8sp"
+                android:text="Password recupero: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnmodo"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textnome"
+                android:layout_alignParentStart="true"
+                android:layout_margin="8sp"
+                android:text="CAMBIO MODO"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnversion"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textnome"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8sp"
+                android:text="GET VERSION"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btntime"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnmodo"
+                android:layout_alignParentStart="true"
+                android:layout_margin="8sp"
+                android:text="SET TIME"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnalexa"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnmodo"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8sp"
+                android:text="RESET ALEXA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnnome"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btnalexa"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8sp"
+                android:text="CAMBIA NOME"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnmem1"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textpw1"
+                android:layout_alignParentStart="true"
+                android:layout_margin="8sp"
+                android:text="MEMORIZZA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btninvia1"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textpw1"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8sp"
+                android:text="INVIA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnmem2"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textpw2"
+                android:layout_alignParentStart="true"
+                android:layout_margin="8sp"
+                android:text="MEMORIZZA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btninvia2"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textpw2"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8sp"
+                android:text="INVIA"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/v1"
+                android:background="@color/primaryColor"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:layout_above="@id/textpw1"
+                android:layout_margin="8sp"
+                android:text="Password recupero: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:background="@color/primaryColor"
+                android:id="@+id/v2"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:layout_above="@id/textpw2"
+                android:layout_margin="8sp"
+                android:text="Password recupero: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <View
+                android:background="@color/primaryColor"
+                android:id="@+id/v3"
+                android:layout_width="match_parent"
+                android:layout_height="1sp"
+                android:layout_below="@id/btninvia2"
+                android:layout_margin="8sp"
+                android:text="Password recupero: "
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

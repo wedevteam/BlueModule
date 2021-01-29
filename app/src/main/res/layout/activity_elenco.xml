@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#3999c4"
+    android:orientation="vertical"
+    tools:context=".ElencoActivity">
+
+    <androidx.cardview.widget.CardView
+        android:background="#186f96"
+        app:cardCornerRadius="8sp"
+        android:layout_margin="8sp"
+        android:elevation="2sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+            android:background="@drawable/titlecardborder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="#186f96"
+            android:layout_width="match_parent"
+            android:layout_margin="4sp"
+            android:weightSum="2"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:orientation="horizontal"
+                android:layout_below="@id/modo"
+
+                android:layout_marginStart="8sp"
+                android:weightSum="3">
+
+                <ImageView
+                    android:src="@drawable/immaginebase"
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:layout_margin="8sp"
+                    android:id="@+id/stato"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stato_off">
+
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/configura"
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                   android:layout_gravity="center"
+                    android:text="BlueModule"
+                    android:layout_margin="8sp"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold">
+
+                </TextView>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/nomessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/elencovuoto"
+        android:textSize="30sp"
+        android:gravity="center"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lista"
+        android:layout_margin="8sp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

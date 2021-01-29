@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BlueModule</string>
+    <string name="descrizionei1">Immagine di avvio</string>
+
+    <string name="elencovuoto">Nessun BlueModule trovato</string>
+    <string name="permessobg">Dalla versione 10 di Android è obbligatorio fornire il permesso di accesso ai servizi di background per poter attivare le funzionalità di ricerca device bluetooth</string>
+    <string name="configura">Configura</string>
+    <string name="stato_on_off">Stato (ON/OFF)</string>
+    <string name="stato_off">Stato: OFF</string>
+    <string name="stato_on">STATO: ON</string>
+    <string name="connected">GATT_CONNECTED</string>
+</resources>
