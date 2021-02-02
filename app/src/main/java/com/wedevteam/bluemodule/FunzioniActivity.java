@@ -14,13 +14,16 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +35,7 @@ import android.widget.Toast;
 
 import com.wedevteam.bluemodule.Database._Database;
 import com.wedevteam.bluemodule.Database.tables.BModule;
+import com.wedevteam.bluemodule.Servizi.SerialListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +56,7 @@ import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RE
 import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
 import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
 
-public class FunzioniActivity extends AppCompatActivity  {
+public class FunzioniActivity extends AppCompatActivity implements ServiceConnection, SerialListener {
 
     // BTLE
     public final static String ACTION_GATT_CONNECTED = "CONNESSO";
@@ -397,4 +401,28 @@ public class FunzioniActivity extends AppCompatActivity  {
         return db.bModuleDao().getAll() ;
     }
 
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+
+    }
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+
+    }
+    @Override
+    public void onSerialConnect() {
+
+    }
+    @Override
+    public void onSerialConnectError(Exception e) {
+
+    }
+    @Override
+    public void onSerialRead(byte[] data) {
+
+    }
+    @Override
+    public void onSerialIoError(Exception e) {
+
+    }
 }

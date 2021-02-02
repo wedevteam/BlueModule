@@ -43,6 +43,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        <service android:name=".Servizi.SerialService" />
     </application>
 
 </manifest>
