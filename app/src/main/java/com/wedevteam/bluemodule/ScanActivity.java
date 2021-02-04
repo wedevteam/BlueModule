@@ -488,7 +488,7 @@ public class ScanActivity extends AppCompatActivity {
                 bModule.setAlias("");
                 bModule.setDataAttivazione("");
                 bModule.setMACAddress(device.getAddress());
-                bModule.setNome(device.getName()    );
+                bModule.setNome(device.getName());
                 bModule.setMSG("");
                 bModule.setNuovoNome("");
                 bModule.setStato(String.valueOf(device.getBondState()));

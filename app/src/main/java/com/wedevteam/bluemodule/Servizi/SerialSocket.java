@@ -82,7 +82,7 @@ public class SerialSocket extends BluetoothGattCallback {
     private boolean connected;
     private int payloadSize = DEFAULT_MTU-3;
 
-    SerialSocket(Context context, BluetoothDevice device) {
+    public SerialSocket(Context context, BluetoothDevice device) {
         if(context instanceof Activity)
             throw new InvalidParameterException("expected non UI context");
         this.context = context;
@@ -157,10 +157,10 @@ public class SerialSocket extends BluetoothGattCallback {
         context.registerReceiver(pairingBroadcastReceiver, pairingIntentFilter);
         if (Build.VERSION.SDK_INT < 23) {
             Log.d(TAG, "connectGatt");
-            gatt = device.connectGatt(context, false, this);
+            gatt = device.connectGatt(context, true, this);
         } else {
             Log.d(TAG, "connectGatt,LE");
-            gatt = device.connectGatt(context, false, this, BluetoothDevice.TRANSPORT_LE);
+            gatt = device.connectGatt(context, true, this, BluetoothDevice.TRANSPORT_LE);
         }
         if (gatt == null)
             throw new IOException("connectGatt failed");

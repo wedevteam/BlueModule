@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,8 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
     // CONST
     private static final int PERMISSION_CODE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
-    private static final long SCAN_PERIOD = 5000;
+    private static final long SCAN_PERIOD = 10000;
+    private final String prename = "YYmJ4z";
 
     // UI
     RecyclerView recyclerView;
@@ -169,7 +171,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
         }
         public void setData(final BModule f1, int position, String tipo) {
             StringBuilder sb = new StringBuilder();
-            sb.append(f1.getNome());
+            sb.append(f1.getNome().substring(6));
             sb.append(" ");
             sb.append(f1.getMSG());
             nome.setText(sb.toString());
@@ -192,6 +194,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(ElencoSchedulatoActivity.this, FunzioniActivity.class);
                             intent.putExtra("device", bluetoothDevices.get(i));
+                            intent.putExtra("nomedevice", bModules.get(i).getNome());
                             startActivity(intent);
                             if (isScanning){
                                 isScanning=false;
@@ -295,6 +298,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
                 (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         try {
             bluetoothAdapter = bluetoothManager != null ? bluetoothManager.getAdapter() : null;
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter == null) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setTitle("BLUETOOTH NON SUPPORTATO");
@@ -325,6 +329,37 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
             bluetoothLeScanner = BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
 
             scanDevices();
+        }
+    }
+    private void scanDevices2(){
+        if (!isScanning) {
+            // Stops scanning after a pre-defined scan period.
+            scanhandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isScanning = false;
+                    bluetoothLeScanner.stopScan(leScanCallback);
+                    copiaScansione();
+                    scansioneAttuale.clear();
+                    bluetoothDevicesAttuali.clear();
+                    SharedPreferences sharedPreferences = getSharedPreferences("BTSP", MODE_PRIVATE);
+                    String v = sharedPreferences.getString("stopscan", "N");
+                    if (v.equals("N")){
+                        scanDevices();}
+                }
+            }, SCAN_PERIOD);
+            isScanning = true;
+           // bluetoothAdapter.startLeScan(null, leScanCallback2);
+        } else {
+            isScanning = false;
+            bluetoothLeScanner.stopScan(leScanCallback);
+            copiaScansione();
+            scansioneAttuale.clear();
+            bluetoothDevicesAttuali.clear();
+            SharedPreferences sharedPreferences = getSharedPreferences("BTSP", MODE_PRIVATE);
+            String v = sharedPreferences.getString("stopscan", "N");
+            if (v.equals("N")){
+                scanDevices();}
         }
     }
     private void scanDevices() {
@@ -361,6 +396,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
     private void copiaScansione() {
         ArrayList<BModule> supp = new ArrayList<>();
         ArrayList<BluetoothDevice> suppDevices = new ArrayList<>();
+        ArrayList<BluetoothDevice> suppNames = new ArrayList<>();
         bModules.clear();
         bluetoothDevices.clear();
         for (BModule b:scansioneAttuale) {
@@ -375,6 +411,8 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
             }
         }
         for (BluetoothDevice bt:bluetoothDevicesAttuali) {
+
+            Log.i("NAME OF DEVICE", bt.getName());
             boolean isInserted=false;
             for (int i = 0; i <suppDevices.size() ; i++) {
                 if(suppDevices.get(i).getAddress().equals(bt.getAddress())){
@@ -401,7 +439,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
                     bModule.setAlias("");
                     bModule.setDataAttivazione("");
                     bModule.setMACAddress(device.getAddress());
-                    bModule.setNome(device.getName());
+                    bModule.setNome(result.getScanRecord().getDeviceName());
                     bModule.setMSG("");
                     bModule.setNuovoNome("");
                     bModule.setStato(String.valueOf(device.getBondState()));
@@ -416,14 +454,14 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
                         }
                     }
                     if (device.getName() != null) {
-                        if (!device.getName().isEmpty()) {
+                        if (!device.getName().isEmpty() && (device.getName().substring(0,6).equals(prename) || device.getName().substring(0,4).equals("Flow"))) {
                             scansioneAttuale.add(bModule);
                             bluetoothDevicesAttuali.add(device);
                         }
                     }
                     if (!isInsert) {
                         if (device.getName() != null) {
-                            if (!device.getName().isEmpty()) {
+                            if (!device.getName().isEmpty() && device.getName().substring(0,6).equals(prename)||device.getName().substring(0,4).equals("Flow")) {
                                 bModules.add(bModule);
                                 bluetoothDevices.add(device);
                                 fillRecycler();

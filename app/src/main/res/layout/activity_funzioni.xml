@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:background="#3999c4"
+    android:background="#186f96"
     tools:context=".FunzioniActivity">
     <androidx.cardview.widget.CardView
-        android:background="#186f96"
+
+        android:backgroundTint="#3999c4"
         android:id="@+id/title"
         app:cardCornerRadius="8sp"
         android:layout_margin="8sp"
@@ -84,16 +84,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
+
+                android:visibility="gone"
                 android:id="@+id/textmodo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
                 android:text="Modo: "
-                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
+
+                android:visibility="gone"
+                android:textColor="@android:color/white"
                 android:id="@+id/textvhw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,33 +107,41 @@
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
                 android:text="Vers.HW: "
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
+
+                android:visibility="gone"
                 android:id="@+id/textvsw"
+                android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                 android:layout_below="@id/textvhw"
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
                 android:text="Vers.SW: "
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
+
+                android:visibility="gone"
                 android:id="@+id/texttempo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
                 android:layout_below="@id/textvsw"
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
                 android:text="Tempo relè: "
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/textnome"
+                android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/texttempo"
@@ -160,6 +174,7 @@
                 android:textStyle="bold" />
 
             <Button
+                android:backgroundTint="#3999c4"
                 android:id="@+id/btnmodo"
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
@@ -176,8 +191,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textnome"
                 android:layout_alignParentEnd="true"
+                android:backgroundTint="#3999c4"
                 android:layout_margin="8sp"
-                android:text="GET VERSION"
+                android:text="CAMBIA NOME"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -189,6 +205,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_margin="8sp"
                 android:text="SET TIME"
+                android:backgroundTint="#3999c4"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -201,9 +218,12 @@
                 android:layout_margin="8sp"
                 android:text="RESET ALEXA"
                 android:textSize="14sp"
+                android:backgroundTint="#3999c4"
                 android:textStyle="bold" />
 
             <Button
+                android:visibility="gone"
+                android:backgroundTint="#3999c4"
                 android:id="@+id/btnnome"
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
@@ -222,11 +242,13 @@
                 android:layout_alignParentStart="true"
                 android:layout_margin="8sp"
                 android:text="MEMORIZZA"
+                android:backgroundTint="#3999c4"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btninvia1"
+                android:backgroundTint="#3999c4"
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textpw1"
@@ -239,6 +261,7 @@
             <Button
                 android:id="@+id/btnmem2"
                 android:layout_width="150sp"
+                android:backgroundTint="#3999c4"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textpw2"
                 android:layout_alignParentStart="true"
@@ -250,6 +273,7 @@
             <Button
                 android:id="@+id/btninvia2"
                 android:layout_width="150sp"
+                android:backgroundTint="#3999c4"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textpw2"
                 android:layout_alignParentEnd="true"
@@ -260,7 +284,7 @@
 
             <View
                 android:id="@+id/v1"
-                android:background="@color/primaryColor"
+                android:textColor="#9ca9ae"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
                 android:layout_above="@id/textpw1"
@@ -270,7 +294,7 @@
                 android:textStyle="bold" />
 
             <View
-                android:background="@color/primaryColor"
+                android:textColor="#9ca9ae"
                 android:id="@+id/v2"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
@@ -280,7 +304,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <View
-                android:background="@color/primaryColor"
+                android:textColor="#9ca9ae"
                 android:id="@+id/v3"
                 android:layout_width="match_parent"
                 android:layout_height="1sp"
