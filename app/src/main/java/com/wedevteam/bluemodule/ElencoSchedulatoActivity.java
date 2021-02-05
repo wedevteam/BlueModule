@@ -216,7 +216,7 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
         db = _Database.getInstance(this);
     }
     private void getModulesFromDB() {
-        bModules = new ArrayList<>(getMainData());
+      //  bModules = new ArrayList<>(getMainData());
     }
     public List<BModule> getMainData() {
         return db.bModuleDao().getAll();
@@ -433,8 +433,13 @@ public class ElencoSchedulatoActivity extends AppCompatActivity {
             new ScanCallback() {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
+
                     super.onScanResult(callbackType, result);
                     device = result.getDevice();
+                    if (device.getName() != null) {
+                        Log.d("SCANNING", device.getName());
+                    }
+
                     BModule bModule = new BModule();
                     bModule.setAlias("");
                     bModule.setDataAttivazione("");

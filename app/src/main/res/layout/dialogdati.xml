@@ -64,7 +64,7 @@
             android:layout_weight="1"
             android:text="Conferma"
             android:textAllCaps="false"
-            android:backgroundTint="@color/primaryColor"
+            android:backgroundTint="#3999c4"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
 

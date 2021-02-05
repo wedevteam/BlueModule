@@ -17,5 +17,9 @@
     <string name="location_denied_title">Location permission denied</string>
     <string name="location_denied_message">As location permission has not been granted, this app cannot scan for Bluetooth LE devices.</string>
     <string name="pairing_request">PAIRING requested\n-> Perform pairing steps. Connect again</string>
-    <string name="nuovonome">NUOVO NOME</string>
+    <string name="nuovonome">Inserisci nuovo nome</string>
+    <string name="nuovotempo">Inserisci tempo accensione relè</string>
+    <string name="configurazione">configurazione</string>
+    <string name="memorizzap1">Memorizza password principale</string>
+    <string name="memorizzap2">Memorizza password di recupero</string>
 </resources>

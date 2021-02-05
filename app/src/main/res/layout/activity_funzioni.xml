@@ -56,7 +56,7 @@
                     android:layout_gravity="center"
                     android:text="BlueModule"
                     android:layout_margin="8sp"
-                    android:textSize="24sp"
+                    android:textSize="16sp"
                     android:textColor="@color/white"
                     android:textStyle="bold">
 
@@ -155,11 +155,12 @@
                 android:id="@+id/textpw1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/btnnome"
+                android:layout_below="@id/btnrele"
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
+                android:textColor="@android:color/white"
                 android:text="Password principale: "
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -169,8 +170,9 @@
                 android:layout_below="@id/btninvia1"
                 android:layout_marginTop="2sp"
                 android:layout_marginStart="8sp"
+                android:textColor="@android:color/white"
                 android:text="Password recupero: "
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <Button
@@ -186,7 +188,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnversion"
+                android:id="@+id/btnnome"
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textnome"
@@ -222,15 +224,14 @@
                 android:textStyle="bold" />
 
             <Button
-                android:visibility="gone"
                 android:backgroundTint="#3999c4"
-                android:id="@+id/btnnome"
+                android:id="@+id/btnrele"
                 android:layout_width="150sp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/btnalexa"
-                android:layout_alignParentEnd="true"
+                android:layout_centerHorizontal="true"
                 android:layout_margin="8sp"
-                android:text="CAMBIA NOME"
+                android:text="RELE ON/OFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 

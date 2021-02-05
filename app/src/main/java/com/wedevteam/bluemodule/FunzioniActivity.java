@@ -6,24 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothProfile;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.text.Editable;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -38,22 +31,14 @@ import android.widget.Toast;
 
 import com.wedevteam.bluemodule.Database._Database;
 import com.wedevteam.bluemodule.Database.tables.BModule;
-import com.wedevteam.bluemodule.Funzioni.Funzioni;
 import com.wedevteam.bluemodule.Funzioni.TextUtil;
 import com.wedevteam.bluemodule.Servizi.SerialListener;
 import com.wedevteam.bluemodule.Servizi.SerialService;
 import com.wedevteam.bluemodule.Servizi.SerialSocket;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_WRITE;
-import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT;
-import static android.bluetooth.BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
 
 public class FunzioniActivity extends AppCompatActivity implements ServiceConnection, SerialListener {
 
@@ -80,6 +65,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     private  BluetoothGattCharacteristic  TX;
     private final String prename = "YYmJ4z";
     private boolean isFromCambioNome=false;
+    ArrayList<BModule>bModules = new ArrayList<>();
+    private String statoRele="";
 
     // NEW SYSTEM
     private enum Connected { False, Pending, True }
@@ -94,6 +81,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     String comandoCompleeto="";
     String nomenuovo="";
     String nomedevice="";
+    String statoDevice = "N";
 
     // UI
     private TextView nomebt;
@@ -104,7 +92,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     private TextView texttempo;
     private TextView textnome;
     private Button btnmodo;
-    private Button btnversion;
+    private Button btnrele;
     private Button btntime;
     private Button btnalexa;
     private Button btnnome;
@@ -112,6 +100,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     private Button btninvia1;
     private Button btnmem2;
     private Button btninvia2;
+    private TextView textpw2;
+    private TextView textpw1;
 
     private final String commandVSW = "v sw";
     private final String commandVHW = "v hw";
@@ -135,6 +125,10 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     private final String rispostaGetModoDef = "def";
     private final String rispostaGetModoPwd = "pwd";
 
+    boolean passwordEsistente = false;
+    String password1="";
+    String password2="";
+
     _Database db;
 
     @Override
@@ -157,6 +151,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             finish();
         }
         setUI();
+        setEmptyLayout();
         setDB();
         bindService(new Intent(this, SerialService.class), this, Context.BIND_AUTO_CREATE);
         if(service != null)
@@ -359,9 +354,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
             }
         }
-        if (comando.startsWith(commandGetModo)){
 
-        }
         if (comando.equals(commandGetModo)){
             Log.i("SEQUENZA COMANDI BASE", "1");
             textView=textmodo;
@@ -370,11 +363,11 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 int codiceErr = Integer.parseInt(risposta[1]) ;
                 if (codiceErr==0){
                     if (risposta[2].equals(rispostaGetModoDef)){
-                        setLayoutDef();
+                        statoDevice="N";
                         msg="Modo: NORMALE";
                     }else{
-                        setLayoutPwd();
                         msg="Modo: PASSWORD";
+                        statoDevice="P";
                     }
                 }else{
                     Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
@@ -405,6 +398,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 int codiceErr = Integer.parseInt(risposta[1]) ;
                 if (codiceErr==0){
                     msg="Stato Relè: "+risposta[2].toUpperCase();
+                    statoRele=risposta[2].toUpperCase();
                 }else{
                     Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
                 }
@@ -414,29 +408,207 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             if (isComandiBase){
                 indexcomandibase=0;
                 isComandiBase=false;
+                if (statoDevice.equals("N"))
+                    setEnabledLayout();
+                else
+                    setEnabledPasswordLayout();
             }
         }
-        if (comando.startsWith(commandTempo)){
+        if (comando.equals(commandTempo)){
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Cambio tempo relè");
+                    alertDialogBuilder
+                            .setMessage("Il tempo di accensione è stato cambiato")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
+        }if (comando.equals(commandPwP)){
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Invio password");
+                    alertDialogBuilder
+                            .setMessage("La password è stata inviata")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
+        }if (comando.equals(commandPwR)){
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Invio password");
+                    alertDialogBuilder
+                            .setMessage("La password è stata inviata")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
+        }if (comando.equals(commandSetModoD)){
+            textView=textmodo;
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    msg="Modo: NORMALE";
+                    statoDevice="N";
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Cambio modo");
+                    alertDialogBuilder
+                            .setMessage("Il modo è stato corretamente cambiato in NORMALE")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                    setEnabledLayout();
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
 
-        }if (comando.startsWith(commandPwP)){
+        }if (comando.equals(commandSetModoP)){
+            textView=textmodo;
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    msg="Modo: PASSWORD";
+                    statoDevice="P";
 
-        }if (comando.startsWith(commandPwR)){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Cambio modo");
+                    alertDialogBuilder
+                            .setMessage("Il modo è stato corretamente cambiato in PASSWORD")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                    setEmptyLayout();
+                    setEnabledPasswordLayout();
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
+        }if (comando.equals(commandSetReleOn)){
+            textView=texttempo;
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    statoRele="ON";
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Relè ON");
+                    alertDialogBuilder
+                            .setMessage("Il relè è on")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                    msg = "Stato Relè: ON";
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
 
-        }if (comando.startsWith(commandSetModoD)){
-
-        }if (comando.startsWith(commandSetModoP)){
-
-        }if (comando.startsWith(commandSetReleOn)){
-
-        }if (comando.startsWith(commandSetReleOff)){
+        }if (comando.equals(commandSetReleOff)){
+            textView=texttempo;
+            String[] risposta = msg.split(" ");
+            if (risposta.length>=2){
+                int codiceErr = Integer.parseInt(risposta[1]) ;
+                if (codiceErr==0){
+                    statoRele="OFF";
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder.setTitle("Relè OFF");
+                    alertDialogBuilder
+                            .setMessage("Il relè è off")
+                            .setCancelable(false)
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    hideSystemUI();
+                    msg = "Stato Relè: OFF";
+                }else{
+                    Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(this, "RISPOSTA ERRATA DAL DEVICE", Toast.LENGTH_SHORT).show();
+            }
 
         }
-        if (!comando.equals(commandAlexa)&& !comando.equals(commandNome)){
+        if (!comando.equals(commandAlexa)&& !comando.equals(commandNome)&& !comando.equals(commandPwP)&& !comando.equals(commandPwR)&& !comando.equals(commandTempo)){
             textView.setVisibility(View.VISIBLE);
             textView.setText(msg);
         }
 
     }
+
     private byte[] pulisciBytes(byte[] data) {
         byte[] bytes = new byte[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -447,10 +619,6 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             }
         }
         return bytes;
-    }
-    private void setLayoutPwd() {
-    }
-    private void setLayoutDef() {
     }
 
 
@@ -467,26 +635,107 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         textnome = findViewById(R.id.textnome);
         statobt = findViewById(R.id.statobt);
         btnmodo = findViewById(R.id.btnmodo);
-        btnversion = findViewById(R.id.btnnome);
+        btnrele = findViewById(R.id.btnrele);
         btntime = findViewById(R.id.btntime);
         btnalexa = findViewById(R.id.btnalexa);
-        btnnome = findViewById(R.id.btnversion);
+        btnnome = findViewById(R.id.btnnome);
         btnmem1 = findViewById(R.id.btnmem1);
         btninvia1 = findViewById(R.id.btninvia1);
         btnmem2 = findViewById(R.id.btnmem2);
         btninvia2 = findViewById(R.id.btninvia2);
-        
+        textpw2 = findViewById(R.id.textpw2);
+        textpw1 = findViewById(R.id.textpw1);
+
         btnmodo.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            String modo = statoDevice.equals("N") ? "PASSWORD" : "NORMALE";
+            setPasswordEsistente();
+
+            if (passwordEsistente){
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("CAMBIO MODO");
+                String finalPassword = password1;
+                alertDialogBuilder
+                        .setIcon(R.drawable.immaginebase)
+                        .setMessage("Vuoi passare alla modalità "+modo+"?")
+                        .setCancelable(false)
+                        .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                if (statoDevice.equals("N")) {
+                                    comandoCompleeto=commandSetModoP + " "+ finalPassword;
+                                    comando = commandSetModoP;
+                                    send(commandSetModoP + " "+ finalPassword);
+                                } else {
+                                    comandoCompleeto=commandSetModoD + " "+ finalPassword;
+                                    comando = commandSetModoD;
+                                    send(commandSetModoD+ " "+ finalPassword);
+                                }
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }else{
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("CAMBIO MODO");
+                alertDialogBuilder
+                        .setIcon(R.drawable.immaginebase)
+                        .setMessage("Per cambiare modo prima devi impostare la password")
+                        .setCancelable(false)
+                        .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+
         });
-        btnversion.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+        btnrele.setOnClickListener(view -> {
+
+            String testo = "";
+            testo = statoRele.equals("ON") ? "OFF" : "ON";
+            if (testo.equals("ON")) {
+                comando = commandSetReleOn;
+            }else{
+                comando = commandSetReleOff;
+            }
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle("CAMBIO STATO RELE'");
+            alertDialogBuilder
+                    .setIcon(R.drawable.immaginebase)
+                    .setMessage("Vui cambiare lo stato del relè in "+testo+"?")
+                    .setCancelable(false)
+                    .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                            if (statoDevice.equals("P")){
+                                setPasswordEsistente();
+                                comandoCompleeto = comando + " "+ password1;
+                            }else{
+                                comandoCompleeto = comando;
+                            }
+                           send(comandoCompleeto);
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         });
         btntime.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            comando=commandTempo;
+            prepareSend(comando);
         });
         btnalexa.setOnClickListener(view -> {
             comando=commandAlexa;
@@ -497,23 +746,212 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             prepareSend(comando);
         });
         btnmem1.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final View customLayout = getLayoutInflater().inflate(R.layout.dialogdati,null);
+            final TextView titolo = customLayout.findViewById(R.id.titolo);
+            final EditText testo = customLayout.findViewById(R.id.testo);
+            testo.setInputType(InputType.TYPE_CLASS_NUMBER);
+            Button annulla = customLayout.findViewById(R.id.annulla);
+            Button conferma = customLayout.findViewById(R.id.conferma);
+            titolo.setText(R.string.memorizzap1);
+            builder.setView(customLayout);
+            final AlertDialog dialogo = builder.create();
+            annulla.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogo.dismiss();
+                }
+            });
+            conferma.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String valore = testo.getText().toString().replace(".","");
+                    valore = valore.replace(",","");
+                    if (isPasswordVerified(valore)){
+                        boolean recordExist = isRecordExist();
+                        if (recordExist){
+                            //TODO aggiorna
+                            for (int i = 0; i <bModules.size(); i++) {
+                                if (bModules.get(i).getMACAddress().equals(deviceChoosen.getAddress())){
+                                    bModules.get(i).setPW1(valore);
+                                }
+                            }
+                            db.bModuleDao().deleteAll();
+                            for (int i = 0; i < bModules.size(); i++) {
+                                db.bModuleDao().insert(bModules.get(i));
+                            }
+                            dialogo.dismiss();
+                        }else{
+                            // TODO inserisci
+                            BModule bModule = new BModule();
+                            bModule.setPW1(valore);
+                            bModule.setAlias("");
+                            bModule.setDataAttivazione("");
+                            bModule.setMACAddress(deviceChoosen.getAddress());
+                            bModule.setNome(nomedevice);
+                            bModule.setMSG("");
+                            bModule.setNuovoNome("");
+                            bModule.setStato(String.valueOf(deviceChoosen.getBondState()));
+                            bModule.setPW2("");
+                            bModule.setTipo(String.valueOf(deviceChoosen.getType()));
+                            db.bModuleDao().insert(bModule);
+                            dialogo.dismiss();
+                        }
+                        showPasswordMemorizzata();
+                    }else{
+                        Toast.makeText(FunzioniActivity.this, "La password deve essere compresa tra 0 e 2147483647", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            dialogo.show();
         });
         btninvia1.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            setPasswordEsistente();
+
+            if (!password1.isEmpty()){
+                comandoCompleeto = commandPwP+" "+password1;
+                comando=commandPwP;
+                send(commandPwP+" "+password1);
+            }else{
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("INVIA PASSWORD");
+                alertDialogBuilder
+                        .setIcon(R.drawable.immaginebase)
+                        .setMessage("Non hai memorizzato la password")
+                        .setCancelable(false)
+                        .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
         });
         btnmem2.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final View customLayout = getLayoutInflater().inflate(R.layout.dialogdati,null);
+            final TextView titolo = customLayout.findViewById(R.id.titolo);
+            final EditText testo = customLayout.findViewById(R.id.testo);
+            testo.setInputType(InputType.TYPE_CLASS_NUMBER);
+            Button annulla = customLayout.findViewById(R.id.annulla);
+            Button conferma = customLayout.findViewById(R.id.conferma);
+            titolo.setText(R.string.memorizzap2);
+            builder.setView(customLayout);
+            final AlertDialog dialogo = builder.create();
+            annulla.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogo.dismiss();
+                }
+            });
+            conferma.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String valore = testo.getText().toString().replace(".","");
+                    valore = valore.replace(",","");
+                    if (isPasswordVerified(valore)){
+                        boolean recordExist = isRecordExist();
+                        if (recordExist){
+                            //TODO aggiorna
+                            for (int i = 0; i <bModules.size(); i++) {
+                                if (bModules.get(i).getMACAddress().equals(deviceChoosen.getAddress())){
+                                    bModules.get(i).setPW2(valore);
+                                }
+                            }
+                            db.bModuleDao().deleteAll();
+                            for (int i = 0; i < bModules.size(); i++) {
+                                db.bModuleDao().insert(bModules.get(i));
+                            }
+                            dialogo.dismiss();
+                        }else{
+                            // TODO inserisci
+                            BModule bModule = new BModule();
+                            bModule.setPW2(valore);
+                            bModule.setAlias("");
+                            bModule.setDataAttivazione("");
+                            bModule.setMACAddress(deviceChoosen.getAddress());
+                            bModule.setNome(nomedevice);
+                            bModule.setMSG("");
+                            bModule.setNuovoNome("");
+                            bModule.setStato(String.valueOf(deviceChoosen.getBondState()));
+                            bModule.setPW1("");
+                            bModule.setTipo(String.valueOf(deviceChoosen.getType()));
+                            db.bModuleDao().insert(bModule);
+                            dialogo.dismiss();
+                        }
+                        showPasswordMemorizzata();
+                    }else{
+                        Toast.makeText(FunzioniActivity.this, "La password deve essere compresa tra 0 e 2147483647", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            dialogo.show();
         });
         btninvia2.setOnClickListener(view -> {
-            comando="v sw";
-            send(comando);
+            setPasswordEsistente();
+
+            if (!password2.isEmpty()){
+                comandoCompleeto = commandPwR+" "+password2;
+                comando=commandPwR;
+                send(commandPwR+" "+password2);
+            }else{
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setTitle("INVIA PASSWORD");
+                alertDialogBuilder
+                        .setIcon(R.drawable.immaginebase)
+                        .setMessage("Non hai memorizzato la password")
+                        .setCancelable(false)
+                        .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
         });
 
         nomebt.setText(nomedevice.substring(6));
+    }
+    private void showPasswordMemorizzata() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Memorizzazione password");
+        alertDialogBuilder
+                .setMessage("La password è stata memorizzata")
+                .setCancelable(false)
+                .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+    private boolean isRecordExist() {
+        bModules = new ArrayList<>(getMainData());
+        for (int i = 0; i < bModules.size(); i++) {
+            if (bModules.get(i).getMACAddress().equals(deviceChoosen.getAddress())){
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean isPasswordVerified(String testo  ) {
+        return (testo.length()>0 && testo.length()<=10 && Integer.parseInt(testo)<=2147483647);
+    }
+    private void setPasswordEsistente() {
+        bModules = new ArrayList<>(getMainData());
+        for (int i = 0; i < bModules.size(); i++) {
+            if (bModules.get(i).getMACAddress().equals(deviceChoosen.getAddress())){
+                password1=bModules.get(i).getPW1();
+                password2=bModules.get(i).getPW2();
+
+                passwordEsistente = !password1.isEmpty() || !password2.isEmpty();
+            }
+        }
     }
     public void prepareSend(String cmd){
         comando = cmd;
@@ -590,6 +1028,39 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                     });
                     dialogo.show();
                     break;
+                case commandTempo:
+                    final AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+                    final View customLayout2 = getLayoutInflater().inflate(R.layout.dialogdati,null);
+                    final TextView titolo2 = customLayout2.findViewById(R.id.titolo);
+                    final EditText testo2 = customLayout2.findViewById(R.id.testo);
+                    testo2.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    Button annulla2 = customLayout2.findViewById(R.id.annulla);
+                    Button conferma2 = customLayout2.findViewById(R.id.conferma);
+                    titolo2.setText(R.string.nuovotempo);
+                    builder2.setView(customLayout2);
+                    final AlertDialog dialogo2 = builder2.create();
+                    annulla2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialogo2.dismiss();
+                        }
+                    });
+                    conferma2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String valore = testo2.getText().toString().replace(".","");
+                            valore = valore.replace(",","");
+                            if (isTempoVerified(valore)){
+                                dialogo2.dismiss();
+                                comandoCompleeto = comando + " " + valore;
+                                send(comandoCompleeto);
+                            }else{
+                                Toast.makeText(FunzioniActivity.this, "Il valore deve essere compreso tra 0 e 100000", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    dialogo2.show();
+                    break;
                 case commandVHW:
                     send(commandVHW);
                     break;
@@ -599,6 +1070,9 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 default:
             }
         }
+    }
+    private boolean isTempoVerified(String testo) {
+        return (testo.length()>=0 && testo.length()<=6 && Integer.parseInt(testo)<=100000);
     }
     private boolean isNomeVerified(String testo) {
         return (testo.length()>4 && testo.length()<=25);
@@ -643,7 +1117,6 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     public void onSerialConnect() {
         status("CONNESSO");
         connected = Connected.True;
-        setEnabledLayout();
         eseguiComandiBase();
     }
     private void eseguiComandiBase() {
@@ -687,7 +1160,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
 
         statobt . setEnabled(false);
         btnmodo . setEnabled(false);
-        //btnversion . setEnabled(false);
+        btnnome . setEnabled(false);
+        btnrele . setEnabled(false);
         btntime . setEnabled(false);
         btnalexa . setEnabled(false);
         btnnome . setEnabled(false);
@@ -704,7 +1178,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         textnome . setBackgroundColor(Color.LTGRAY);
         statobt . setBackgroundColor(Color.LTGRAY);
         btnmodo . setBackgroundColor(Color.LTGRAY);
-    //   btnversion . setBackgroundColor(Color.LTGRAY);
+         btnnome . setBackgroundColor(Color.LTGRAY);
+         btnrele . setBackgroundColor(Color.LTGRAY);
         btntime . setBackgroundColor(Color.LTGRAY);
         btnalexa . setBackgroundColor(Color.LTGRAY);
         btnnome . setBackgroundColor(Color.LTGRAY);
@@ -723,7 +1198,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         textnome . setEnabled(true);
         statobt . setEnabled(true);
         btnmodo . setEnabled(true);
-     //   btnversion . setEnabled(true);
+        btnnome . setEnabled(true);
+        btnrele . setEnabled(true);
         btntime . setEnabled(true);
         btnalexa . setEnabled(true);
         btnnome . setEnabled(true);
@@ -740,7 +1216,8 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         textnome . setBackgroundColor(Color.parseColor("#186f96"));
         statobt . setBackgroundColor(Color.parseColor("#186f96"));
         btnmodo . setBackgroundColor(Color.parseColor("#3999c4"));
-   //     btnversion . setBackgroundColor(Color.parseColor("#3999c4"));
+        btnnome . setBackgroundColor(Color.parseColor("#3999c4"));
+        btnrele . setBackgroundColor(Color.parseColor("#3999c4"));
         btntime . setBackgroundColor(Color.parseColor("#3999c4"));
         btnalexa . setBackgroundColor(Color.parseColor("#3999c4"));
         btnmem1 . setBackgroundColor(Color.parseColor("#3999c4"));
@@ -749,15 +1226,13 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         btninvia2 . setBackgroundColor(Color.parseColor("#3999c4"));
     }
     private void setEmptyLayout() {
-        nomebt.setVisibility(View.GONE);
         textmodo . setVisibility(View.GONE);
         textvhw . setVisibility(View.GONE);
         textvsw . setVisibility(View.GONE);
         texttempo . setVisibility(View.GONE);
         textnome . setVisibility(View.GONE);
-        statobt . setVisibility(View.GONE);
         btnmodo . setVisibility(View.GONE);
-    //    btnversion . setVisibility(View.GONE);
+        btnrele . setVisibility(View.GONE);
         btntime . setVisibility(View.GONE);
         btnalexa . setVisibility(View.GONE);
         btnnome . setVisibility(View.GONE);
@@ -765,21 +1240,44 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         btninvia1 . setVisibility(View.GONE);
         btnmem2 . setVisibility(View.GONE);
         btninvia2 . setVisibility(View.GONE);
+        textpw2 . setVisibility(View.GONE);
+        textpw1 . setVisibility(View.GONE);
     }
     private void setFullLayout() {
-        nomebt.setVisibility(View.VISIBLE);
         textmodo . setVisibility(View.VISIBLE);
         textvhw . setVisibility(View.VISIBLE);
         textvsw . setVisibility(View.VISIBLE);
         texttempo . setVisibility(View.VISIBLE);
-        statobt . setVisibility(View.VISIBLE);
         btnmodo . setVisibility(View.VISIBLE);
-     //   btnversion . setVisibility(View.VISIBLE);
+        btnrele . setVisibility(View.VISIBLE);
+        btnnome . setVisibility(View.VISIBLE);
         btntime . setVisibility(View.VISIBLE);
         btnalexa . setVisibility(View.VISIBLE);
         btnmem1 . setVisibility(View.VISIBLE);
         btninvia1 . setVisibility(View.VISIBLE);
         btnmem2 . setVisibility(View.VISIBLE);
         btninvia2 . setVisibility(View.VISIBLE);
+        textpw2 . setVisibility(View.VISIBLE);
+        textpw1 . setVisibility(View.VISIBLE);
+    }
+    private void setEnabledPasswordLayout() {
+        textmodo . setVisibility(View.VISIBLE);
+        textvhw . setVisibility(View.VISIBLE);
+        textvsw . setVisibility(View.VISIBLE);
+        texttempo . setVisibility(View.VISIBLE);
+        btnmodo . setVisibility(View.VISIBLE);
+        btnmem1 . setVisibility(View.VISIBLE);
+        btninvia1 . setVisibility(View.VISIBLE);
+        btnmem2 . setVisibility(View.VISIBLE);
+        btninvia2 . setVisibility(View.VISIBLE);
+        btnrele . setVisibility(View.VISIBLE);
+        textpw2 . setVisibility(View.VISIBLE);
+        textpw1 . setVisibility(View.VISIBLE);
+        btnmem1 . setEnabled(true);
+        btninvia1 . setEnabled(true);
+        btnmem2 . setEnabled(true);
+        btninvia2 . setEnabled(true);
+        btnmodo . setEnabled(true);
+        btnrele.setEnabled(true);
     }
 }
