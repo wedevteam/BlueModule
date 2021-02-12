@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#3999c4"
-    android:orientation="vertical"
     tools:context=".ElencoActivity">
 
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardv"
         android:background="#186f96"
         app:cardCornerRadius="8sp"
         android:layout_margin="8sp"
@@ -74,6 +75,8 @@
         android:gravity="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/cardv"
+        android:layout_above="@+id/esci"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lista"
@@ -81,4 +84,37 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-</LinearLayout>
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16sp"
+        android:id="@+id/esci"
+        android:backgroundTint="#186f96"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:text="@string/esci_dall_app">
+
+    </Button>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:id="@+id/scan"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#186f96"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/bluetooth"
+        app:tint="@android:color/white"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20sp"
+        android:layout_marginBottom="80sp"
+        >
+
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+    <ProgressBar
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/progressbar"
+        android:visibility="gone"/>
+</RelativeLayout>

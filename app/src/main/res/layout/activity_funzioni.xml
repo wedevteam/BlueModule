@@ -231,7 +231,7 @@
                 android:layout_below="@id/btnalexa"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="8sp"
-                android:text="RELE ON/OFF"
+                android:text="ON/OFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -314,7 +314,19 @@
                 android:text="Password recupero: "
                 android:textSize="14sp"
                 android:textStyle="bold" />
+
         </RelativeLayout>
     </ScrollView>
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16sp"
+        android:id="@+id/esci"
+        android:backgroundTint="#3999c4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:text="@string/torna_ad_elenco">
 
+    </Button>
 </RelativeLayout>

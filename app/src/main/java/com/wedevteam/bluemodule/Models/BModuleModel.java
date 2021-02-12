@@ -20,7 +20,7 @@ public class BModuleModel {
     public String MSG;
 
     public BModuleModel() {
-
+        MACAddress="";
     }
     public int getId() {
         return id;

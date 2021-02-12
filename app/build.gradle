@@ -43,4 +43,5 @@ dependencies {
 
     // Java language implementation
     implementation "androidx.activity:activity:$activity_version"
+
 }

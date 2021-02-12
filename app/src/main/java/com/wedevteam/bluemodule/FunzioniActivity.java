@@ -3,6 +3,8 @@ package com.wedevteam.bluemodule;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import com.wedevteam.bluemodule.Database._Database;
 import com.wedevteam.bluemodule.Database.tables.BModule;
+import com.wedevteam.bluemodule.Funzioni.Funzioni;
 import com.wedevteam.bluemodule.Funzioni.TextUtil;
 import com.wedevteam.bluemodule.Servizi.SerialListener;
 import com.wedevteam.bluemodule.Servizi.SerialService;
@@ -102,6 +105,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     private Button btninvia2;
     private TextView textpw2;
     private TextView textpw1;
+    private Button esci;
 
     private final String commandVSW = "v sw";
     private final String commandVHW = "v hw";
@@ -144,7 +148,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             if (intent!=null){
                 deviceChoosen =intent.getExtras().getParcelable("device");
                 nomedevice = intent.getExtras().getString("nomedevice");
-                Toast.makeText(this, deviceChoosen.getName(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, deviceChoosen.getName(), Toast.LENGTH_SHORT).show();
             }
         }catch (Exception e){
             startActivity(new Intent(FunzioniActivity.this,ElencoActivity.class));
@@ -182,7 +186,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     }
     @Override
     protected void onStop() {
-        if(service != null && !isChangingConfigurations()) service.detach();
+      //  if(service != null && !isChangingConfigurations()) service.detach();
         super.onStop();
     }
     @Override
@@ -190,7 +194,6 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         if (connected != Connected.False) disconnect();
         stopService(new Intent(this, SerialService.class));
         super.onDestroy();
-
     }
     // ==============================================
     // BT
@@ -277,7 +280,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 public void onFinish() {
                     if (isComandiBase){
                         ++indexcomandibase;
-                        prepareSend(comandibase[indexcomandibase]);
+                        prepareSend(comandibase[2]);
                     }
                 }
             }.start();
@@ -305,7 +308,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 public void onFinish() {
                     if (isComandiBase){
                         ++indexcomandibase;
-                        prepareSend(comandibase[indexcomandibase]);
+                        prepareSend(comandibase[3]);
                     }
                 }
             }.start();
@@ -384,7 +387,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 public void onFinish() {
                     if (isComandiBase){
                         ++indexcomandibase;
-                        prepareSend(comandibase[indexcomandibase]);
+                        prepareSend(comandibase[1]);
                     }
                 }
             }.start();
@@ -420,7 +423,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 int codiceErr = Integer.parseInt(risposta[1]) ;
                 if (codiceErr==0){
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                    alertDialogBuilder.setTitle("Cambio tempo relè");
+                    alertDialogBuilder.setTitle("Cambio tempo");
                     alertDialogBuilder
                             .setMessage("Il tempo di accensione è stato cambiato")
                             .setCancelable(false)
@@ -553,9 +556,9 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 if (codiceErr==0){
                     statoRele="ON";
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                    alertDialogBuilder.setTitle("Relè ON");
+                    alertDialogBuilder.setTitle("Stato");
                     alertDialogBuilder
-                            .setMessage("Il relè è on")
+                            .setMessage("Stato: ON")
                             .setCancelable(false)
                             .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -565,7 +568,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
                     hideSystemUI();
-                    msg = "Stato Relè: ON";
+                    msg = "Stato: ON";
                 }else{
                     Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
                 }
@@ -581,9 +584,9 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                 if (codiceErr==0){
                     statoRele="OFF";
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                    alertDialogBuilder.setTitle("Relè OFF");
+                    alertDialogBuilder.setTitle("Stato");
                     alertDialogBuilder
-                            .setMessage("Il relè è off")
+                            .setMessage("Stato: OFF")
                             .setCancelable(false)
                             .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -593,7 +596,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
                     hideSystemUI();
-                    msg = "Stato Relè: OFF";
+                    msg = "Stato: OFF";
                 }else{
                     Toast.makeText(this, errs[codiceErr], Toast.LENGTH_SHORT).show();
                 }
@@ -622,7 +625,14 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
     }
 
 
-
+    public void restart(){
+        Intent mStartActivity = new Intent(this, ElencoSchedulatoActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(1);
+    }
     // ==============================================
     // UI
     // ==============================================
@@ -645,6 +655,21 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         btninvia2 = findViewById(R.id.btninvia2);
         textpw2 = findViewById(R.id.textpw2);
         textpw1 = findViewById(R.id.textpw1);
+        esci = findViewById(R.id.esci);
+
+        esci.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                service.detach();
+               if (connected != Connected.False) disconnect();
+                service.cancelNotification();
+                stopService(new Intent(FunzioniActivity.this, SerialService.class));
+
+                startActivity(new Intent(FunzioniActivity.this,ElencoSchedulatoActivity.class));
+                finishAffinity();
+            }
+        });
 
         btnmodo.setOnClickListener(view -> {
             String modo = statoDevice.equals("N") ? "PASSWORD" : "NORMALE";
@@ -707,11 +732,18 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
             }else{
                 comando = commandSetReleOff;
             }
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle("CAMBIO STATO RELE'");
+            if (statoDevice.equals("P")){
+                setPasswordEsistente();
+                comandoCompleeto = comando + " "+ password1;
+            }else{
+                comandoCompleeto = comando;
+            }
+            send(comandoCompleeto);
+           /* AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setTitle("CAMBIO STATO");
             alertDialogBuilder
                     .setIcon(R.drawable.immaginebase)
-                    .setMessage("Vui cambiare lo stato del relè in "+testo+"?")
+                    .setMessage("Vuoi cambiare lo stato in "+testo+"?")
                     .setCancelable(false)
                     .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -731,7 +763,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
                         }
                     });
             AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            alertDialog.show();*/
         });
         btntime.setOnClickListener(view -> {
             comando=commandTempo;
@@ -1075,7 +1107,7 @@ public class FunzioniActivity extends AppCompatActivity implements ServiceConnec
         return (testo.length()>=0 && testo.length()<=6 && Integer.parseInt(testo)<=100000);
     }
     private boolean isNomeVerified(String testo) {
-        return (testo.length()>4 && testo.length()<=25);
+        return (testo.length()>3 && testo.length()<=25);
     }
     public void hideSystemUI() {
         getWindow().getDecorView().setSystemUiVisibility(

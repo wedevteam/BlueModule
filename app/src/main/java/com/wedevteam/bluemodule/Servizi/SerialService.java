@@ -165,7 +165,7 @@ public class SerialService extends Service implements SerialListener {
         startForeground(Constants.NOTIFY_MANAGER_START_FOREGROUND_SERVICE, notification);
     }
 
-    private void cancelNotification() {
+    public void cancelNotification() {
         stopForeground(true);
     }
 

@@ -157,10 +157,10 @@ public class SerialSocket extends BluetoothGattCallback {
         context.registerReceiver(pairingBroadcastReceiver, pairingIntentFilter);
         if (Build.VERSION.SDK_INT < 23) {
             Log.d(TAG, "connectGatt");
-            gatt = device.connectGatt(context, true, this);
+            gatt = device.connectGatt(context, false, this);
         } else {
             Log.d(TAG, "connectGatt,LE");
-            gatt = device.connectGatt(context, true, this, BluetoothDevice.TRANSPORT_LE);
+            gatt = device.connectGatt(context, false, this, BluetoothDevice.TRANSPORT_LE);
         }
         if (gatt == null)
             throw new IOException("connectGatt failed");
